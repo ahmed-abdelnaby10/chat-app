@@ -35,8 +35,8 @@ export const ChatContextProvider = ({ children, user }) => {
 
     // Initialize Socket
     useEffect(()=> {
-        // const socketURL = import.meta.env.VITE_SOCKET_SERVER_URL
-        socketRef.current = io('http://localhost:5000', {
+        const socketURL = import.meta.env.VITE_SOCKET_SERVER_URL
+        socketRef.current = io(socketURL, {
             reconnection: true,
             reconnectionAttempts: 5
         });

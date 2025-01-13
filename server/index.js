@@ -23,16 +23,18 @@ const app = express();
 const expressServer = http.createServer(app);
 
 // Create socket server combined with express server
+const clientURL = process.env.CLIENT_URL
+
 const io = new Server(
     expressServer,
     {cors: {
-        origin: "http://localhost:5173"
+        origin: clientURL
     }}
 );
 
 // Middlewares
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: clientURL,
 };
 
 app.use(cors(corsOptions));
