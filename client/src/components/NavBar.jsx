@@ -36,7 +36,7 @@ export default function NavBar() {
     }
 
     return (
-        <Navbar bg="dark" className="mb-4" style={{ height: '3.75rem' }}>
+        <Navbar bg="dark" className="mb-4 position-sticky top-0 z-3" style={{ height: '3.75rem' }}>
             <Container>
                 <h2>
                     <Link to='/' className="link-light text-decoration-none">
@@ -86,14 +86,6 @@ export default function NavBar() {
                                             }}
                                         >
                                             Account
-                                        </Dropdown.Item>
-                                        <Dropdown.Item 
-                                            as="button"
-                                            onClick={() => {
-                                                navigate("/friends")
-                                            }}
-                                        >
-                                            Friends
                                         </Dropdown.Item>
                                         <Dropdown.Item
                                             as="button"

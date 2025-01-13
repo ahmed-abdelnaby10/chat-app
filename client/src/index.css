@@ -3,6 +3,20 @@
     user-select: none;
 }
 
+::-webkit-scrollbar{
+    width: 3px;
+}
+
+::-webkit-scrollbar-thumb{
+    background-color: rgba(72, 112, 223, 1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+}
+
 body {
     color: white;
     background-color: rgb(40, 40, 40);
@@ -15,12 +29,6 @@ body {
 }
 
 .single-user {
-    /*background: rgb(0, 213, 255);
-    color: white;
-    padding: 5px 7px;
-    border-radius: 10px;
-    margin-right: 0.5rem;
-    */
     cursor: pointer;
     position: relative;
 }
@@ -49,8 +57,31 @@ body {
 .user-card {
     color: white;
     position: relative;
-    border-bottom: 1px solid rgb(100, 100, 100);
     width: 100%;
+}
+
+.user-card-container {
+    padding: 0rem 0.5rem;
+    height: 78px;
+    border-bottom: 1px solid rgb(100, 100, 100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px;
+}
+
+.user-card-container.selected {
+    background-color: rgb(60, 60, 60);
+    border-radius: 12px;
+    border: 0;
+}
+
+.user-card-container.selected + .user-card-container {
+    border-top: 1px solid rgb(100, 100, 100);
+} 
+
+.user-card-container:last-of-type {
+    border: 0;
 }
 
 .user-card .text-content {
@@ -81,21 +112,54 @@ body {
 
     /* Chat Box */
 .chat-box {
-    height: calc(100vh - 10.1rem);
+    max-height: calc(100vh - 7rem);
     overflow-y: auto;
     background: rgb(25, 25, 25);
     border-radius: 10px;
     position: static;
 }
 
+.chats {
+    height: calc(100vh - 7rem);
+    border-width: 0 1px 1px;
+    border-style: solid;
+    border-radius: 8px;
+}
+
 @media (max-width: 1024px) {
-    .chat-box {
-        height: calc(100vh - 7rem);
+    .chats {
+        border-width: 1px;
     }
 }
 
+.chats-header {
+    border-width: 1px 0;
+    border-style: solid;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 4px;
+}
+
+.potenial-chats .user-card:last-of-type {
+    border: 0;
+}
+
+.potenial-chats .user-card {
+    max-width: 100%;
+    width: auto;
+    padding: 1rem 0;
+    margin: 0 0.5rem;
+    border-bottom: 1px solid rgb(100, 100, 100);
+}
+
+.close-potenial-chat {
+    position: absolute;
+    width: fit-content;
+    right: 12px;
+    top: 12px;
+}
+
 .messages-box {
-    height: fit-content;
+    overflow-y: auto;
 }
 
     /* Chat Header */
@@ -108,6 +172,7 @@ body {
     color: white;
     background: rgb(30, 30, 30);
 }
+
 .close-chat-btn {
     position: absolute;
     left: 20px;
@@ -140,20 +205,6 @@ body {
     scroll-behavior: smooth;
 }
 
-.messages::-webkit-scrollbar {
-    width: 4px;
-}
-
-.messages::-webkit-scrollbar-thumb {
-    background-color: rgba(72, 112, 223, 1);
-    border-radius: 10px;
-}
-
-.messages::-webkit-scrollbar-track {
-    background-color: rgb(100, 100, 100);
-    border-radius: 10px;
-}
-
 .message {
     color: white;
     background: #282828;
@@ -184,6 +235,7 @@ body {
     background: rgb(30, 30, 30);
     padding: 1rem;
 }
+
 .send-btn {
     border: none;
     background: rgba(72, 112, 223, 1);
@@ -328,21 +380,25 @@ body {
     object-fit: cover;
     box-shadow: 0px 0px 6px 0px rgba(255, 255, 255, 0.1);
 }
+
 #dropdown-item-button {
     padding: 0;
     border-width: 0;
 }
+
 #dropdown-item-button + .dropdown-menu {
     left: auto;
     right: 0;
     top: calc(100% + 12px);
 }
+
 #dropdown-item-button:active, 
 #dropdown-item-button.show,
 #dropdown-item-button:hover {
     border: none !important;
     color: transparent;
 }
+
 #dropdown-item-button.show {
     border: none !important;
 }
@@ -450,4 +506,30 @@ body {
 .reaction-message {
     position: absolute;
     bottom: -12px;
+}
+
+.new-chat .bi-plus {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.new-chat .bi-chat-left {
+    font-size: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 9px;
+}
+
+.bi-eye-fill,
+.bi-eye-slash-fill {
+    bottom: 6.8px;
+    right: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.bi-eye-fill:hover,
+.bi-eye-slash-fill:hover {
+    color: black !important;
 }

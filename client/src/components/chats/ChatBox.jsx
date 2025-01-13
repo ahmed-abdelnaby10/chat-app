@@ -10,31 +10,36 @@ import Spinner from 'react-bootstrap/Spinner';
 import PropTypes from 'prop-types';
 import useMediaQuery from "../../hooks/useMediaQuery"
 import { formatMessageDate, isNewDay } from "../../utils/dateDivider"
-import CustomContextMenu from "./ContextMenu"
+import CustomContextMenu from "../context menus/ContextMenu"
 import { useSelector } from "../../lib/rtk/index"
+import MsgContextMenu from "../context menus/MessageContextMenu"
 
 export default function ChatBox({ handleCloseChat }) {
-    const { 
+    const {
         currentChat, 
         messages, 
         isMessagesError, 
         isMessagesLoading, 
         sendTextMessage,
         isSendTextMessageLoading, 
-        editMessage, 
+        editMessage,
         editMessageLoading,
         reactionMessage,
+        userChats,
+        updateCurrentChat
     } = useContext(ChatContext)
 
     const user = useSelector(state => state.user)
     const { recipientUser } = useFetchRecipientUser(currentChat, user)
     const [textMessage, setTextMessage] = useState("")
+    const [selectedMessage, setSelectedMessage] = useState(null)
     const [editingMessage, setEditingMessage] = useState(null)
     const isSmallScreen = useMediaQuery("(max-width: 1024px)")
     const messagesContainerRef = useRef()
     const messageInputRef = useRef()
     const [isAutoScroll, setIsAutoScroll] = useState(true);
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+    const [msgContextMenu, setMsgContextMenu] = useState({ visible: false, x: 0, y: 0 });
 
     useEffect(() => {
         if (isAutoScroll && messagesContainerRef.current) {
@@ -52,16 +57,31 @@ export default function ChatBox({ handleCloseChat }) {
 
     const handleContextMenu = (e) => {
         e.preventDefault();
+        setMsgContextMenu({ visible: false, x: 0, y: 0 });
         setContextMenu({
             visible: true,
-            x: e.pageX,
-            y: e.pageY,
+            x: e.pageX - 135,
+            y: e.pageY - 86,
         });
     };
 
     const closeContextMenu = () => {
         setContextMenu({ visible: false, x: 0, y: 0 })
         handleCloseChat()
+    };
+
+    const handleMsgContextMenu = (e) => {
+        e.preventDefault();
+        setContextMenu({ visible: false, x: 0, y: 0 });
+        setMsgContextMenu({
+            visible: true,
+            x: e.pageX - 135,
+            y: e.pageY - 86,
+        });        
+    };
+
+    const closeMsgContextMenu = () => {
+        setMsgContextMenu({ visible: false, x: 0, y: 0 })
     };
 
     const handleSubmitMessage = () => {
@@ -87,20 +107,42 @@ export default function ChatBox({ handleCloseChat }) {
         messageInputRef.current.focus();
     };
     const handleReactToMessage = (message) => {
-        if (message?.senderId === user?._id) {
+        if (message?.senderId !== user?._id) {
             reactionMessage({
                 messageId: message?._id
             })
         }else {
-            return false
+            console.warn("You can only react to messages you received.");
+            return false;
         }
     };
 
+    useEffect(() => {
+        const ids = userChats?.map((chat) => {
+            return chat._id
+        })
+        if (!ids?.includes(currentChat?._id)) {
+            updateCurrentChat(null)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userChats])
+
     if (!recipientUser || !currentChat) {
         return (
-            <p className={`${isSmallScreen ? "w-100" : 'w-50'} text-center`}>
-                No conversation selected yet...
-            </p>
+            <div 
+                className={`
+                    ${isSmallScreen ? "w-100" : 'w-50'}
+                    chat-box position-sticky d-flex justify-content-center
+                `} 
+                style={{ 
+                    top: "84px", 
+                    height: "100vh" 
+                }}
+            >
+                <p className='text-center mt-5'>
+                    No conversation selected yet...
+                </p>
+            </div>
         )
     }
     if (isMessagesError) {
@@ -111,7 +153,7 @@ export default function ChatBox({ handleCloseChat }) {
     
     return (
         <>
-            <Stack gap={4} className={`${isSmallScreen ? "w-100" : 'w-50'} chat-box`}>
+            <Stack gap={4} className={`${isSmallScreen ? "w-100" : 'w-50'} chat-box position-sticky`} style={{ top: "84px" }}>
                 <div className="chat-header">
                     {
                         isSmallScreen && (
@@ -127,8 +169,13 @@ export default function ChatBox({ handleCloseChat }) {
                     className={`${isMessagesLoading && "d-flex align-items-center justify-content-center"} messages`} 
                     ref={messagesContainerRef} 
                     onScroll={handleScroll}
-                    onContextMenu={handleContextMenu}
-                    onClick={()=>{setContextMenu({ visible: false, x: 0, y: 0 })}}
+                    onContextMenu={(e) => {
+                        handleContextMenu(e)
+                    }}
+                    onClick={()=>{
+                        setContextMenu({ visible: false, x: 0, y: 0 })
+                        setMsgContextMenu({ visible: false, x: 0, y: 0 })
+                    }}
                 >
                     {
                         !isMessagesLoading ?
@@ -150,6 +197,12 @@ export default function ChatBox({ handleCloseChat }) {
                                                 : "message align-self-start flex-grow-0"
                                             } position-relative`}
                                             onDoubleClick={()=> {handleReactToMessage(message)}}
+                                            onContextMenu={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedMessage(message)
+                                                handleMsgContextMenu(e)
+                                            }}
+                                            onClick={()=>{setMsgContextMenu({ visible: false, x: 0, y: 0 })}}
                                         >
                                             <span className="message-text">{message.text}</span>
                                             <div className={`d-flex align-items-center gap-2 ${message?.edited ? "justify-content-between" : "justify-content-end"} w-100`}>
@@ -253,6 +306,11 @@ export default function ChatBox({ handleCloseChat }) {
             {
                 (contextMenu.visible && !isSmallScreen) && (
                     <CustomContextMenu contextMenu={contextMenu} closeContextMenu={closeContextMenu} />
+                )
+            }
+            {
+                (msgContextMenu.visible) && (
+                    <MsgContextMenu contextMenu={msgContextMenu} closeContextMenu={closeMsgContextMenu} selectedMessage={selectedMessage} />
                 )
             }
         </>

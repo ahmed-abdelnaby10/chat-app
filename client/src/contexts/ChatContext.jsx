@@ -4,7 +4,7 @@ import { baseURL, getRequest, postRequest } from "../utils/services";
 import { io } from "socket.io-client"   
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { getSotredUserChats } from "../utils/getUserChats";
-import { reactionToMessage, updateMessage } from "../utils/message";
+import { deleteChat, deleteMessage, reactionToMessage, updateMessage } from "../utils/message";
 import { useSelector } from "../lib/rtk/index";
 
 const ChatContext = createContext()
@@ -30,11 +30,12 @@ export const ChatContextProvider = ({ children, user }) => {
     const [onlineUsers, setOnlineUsers] = useState([])
     const [notifications, setNotifications] = useState([])
     const [allUsers, setAllUsers] = useState([])
+    const [showChatBox, setShowChatBox] = useState(false);
 
     // Initialize Socket
     useEffect(()=> {
-        const socketURL = import.meta.env.VITE_SOCKET_SERVER_URL
-        socketRef.current = io(socketURL, {
+        // const socketURL = import.meta.env.VITE_SOCKET_SERVER_URL
+        socketRef.current = io('http://localhost:5000', {
             reconnection: true,
             reconnectionAttempts: 5
         });
@@ -87,7 +88,7 @@ export const ChatContextProvider = ({ children, user }) => {
     useEffect(() => {
         if (socketRef.current === null) return
 
-        const recipientId = currentChat?.members?.find((id) => id !== user?._id)
+        const recipientId = currentChat?.members?.find((id) => id === user?._id)
 
         socketRef.current.emit("reactToMessage", {...reactedMessage, recipientId})
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,7 +193,7 @@ export const ChatContextProvider = ({ children, user }) => {
             console.error(errorMessage);
         },
         keepPreviousData: true,
-        enabled: isAuthenticated && user?._id   
+        enabled: Boolean(isAuthenticated) 
     })
 
     // get potential chats
@@ -233,7 +234,7 @@ export const ChatContextProvider = ({ children, user }) => {
             setIsUserChatsError(userChatsData?.data?.message)
         },
         keepPreviousData: true,
-        enabled: isAuthenticated && user?._id
+        enabled: Boolean(isAuthenticated)
     })
 
     useEffect(() => {
@@ -241,25 +242,24 @@ export const ChatContextProvider = ({ children, user }) => {
     }, [queryClient, notifications, newMessage])
 
     // get Messages
-    useEffect(()=> {
-        if (!currentChat?._id) return;
-
-        const getMessages = async() => {
-            setIsMessagesLoading(true)
+    const { data: messagesData } = useQuery({
+        queryKey: ['messages'],
+        queryFn: () => getRequest(`${baseURL}/messages/${currentChat?._id}`),
+        onSuccess: async (res) => {
+            setIsMessagesLoading(false)
             setIsMessagesError(null)
 
-            const response = await getRequest(`${baseURL}/messages/${currentChat?._id}`)
-
-            setIsMessagesLoading(false)
-
-            if (response?.status !== "success") {
-                return setIsMessagesError(response?.message)
-            }
-
-            setMessages(response?.data?.messages)
-        }
-        getMessages()
-    }, [currentChat])
+            setMessages(res?.data?.messages)          
+        },
+        onError: () => {
+            setIsMessagesError(messagesData?.data?.message)
+        },
+        keepPreviousData: true,
+        enabled: Boolean(isAuthenticated && currentChat)
+    })
+    useEffect(()=> {
+        queryClient.invalidateQueries('messages')
+    }, [currentChat, queryClient])
 
     // Send text message
     const sendTextMessage = useCallback(async (textMessage, sender, currentChatId, setTextMessage) => {
@@ -330,6 +330,38 @@ export const ChatContextProvider = ({ children, user }) => {
         queryClient.invalidateQueries(['userChats'])
     }, [queryClient])
 
+    const handleDeleteMessage = useCallback(async (messageId) => {
+        try {
+            await deleteMessage(messageId)
+            queryClient.invalidateQueries({
+                queryKey: ["messages"],
+            });
+            queryClient.invalidateQueries(['userChats']) 
+        } catch (error) {
+            const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again.';
+            console.error(errorMessage);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const handleDeleteChat = useCallback(async (chatId) => {
+        try {
+            await deleteChat(chatId)
+            queryClient.invalidateQueries(['userChats'])
+            if (currentChat?._id === chatId) {
+                updateCurrentChat(null)
+            }
+        } catch (error) {
+            const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again.';
+            console.error(errorMessage);
+        }
+    }, [currentChat?._id, queryClient, updateCurrentChat])
+
+    // Update show chat box state for small screens
+    const updateShowChatBox = useCallback((value)=> {
+        setShowChatBox(value)
+    }, [])
+
     // mark All Notifications As Read
     const markAllNotificationsAsRead = useCallback((notifications) => {
         const modifiedNotifications = notifications.map((n) => {
@@ -363,6 +395,8 @@ export const ChatContextProvider = ({ children, user }) => {
 
         updateCurrentChat(desiredChat)
         setNotifications(modifiedNotifications)
+        updateShowChatBox(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateCurrentChat])
 
     // update Online Users After Logout
@@ -403,6 +437,7 @@ export const ChatContextProvider = ({ children, user }) => {
                 createChat,
                 updateCurrentChat,
                 currentChat,
+                handleDeleteChat,
                 messages,
                 isMessagesError,
                 isMessagesLoading,
@@ -414,6 +449,7 @@ export const ChatContextProvider = ({ children, user }) => {
                 reactionMessage,
                 reactionMessageLoading,
                 reactionMessageError,
+                handleDeleteMessage,
                 isSendTextMessageLoading,
                 isSendTextMessageError,
                 onlineUsers,
@@ -422,7 +458,9 @@ export const ChatContextProvider = ({ children, user }) => {
                 allUsers,
                 markAllNotificationsAsRead,
                 markNotificationAsRead,
-                markThisUserNotifications
+                markThisUserNotifications,
+                updateShowChatBox,
+                showChatBox
             }}
         >
             {children}

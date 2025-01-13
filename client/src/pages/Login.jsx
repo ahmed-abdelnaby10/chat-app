@@ -10,7 +10,7 @@ import { ACCESS_TOKEN } from "../utils/services";
 import { useDispatch } from "../lib/rtk/index"
 import { setUser } from "../lib/rtk/slices/userSlice";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { setIsAuthenticated } from "../lib/rtk/slices/authSlice";
 
 export default function Login() {
@@ -21,6 +21,11 @@ export default function Login() {
         type: "",
         text: ""
     })
+    const [showPassword, setShowPassword] = useState(false)
+
+    const handleTogglePassword = useCallback((state) => {
+        setShowPassword(!state)
+    }, [])
 
     const loginFormSchema = z.object({
         email: z
@@ -43,6 +48,7 @@ export default function Login() {
             onSuccess: (res) => {
                 const token = res?.data?.data?.token
                 const user = res?.data?.data?.user
+
                 setLoginMessage({
                     type: res.data.status,
                     text: res.data.message
@@ -56,12 +62,16 @@ export default function Login() {
                 form.reset()
             },
             onError: (error) => {
-                const errorMessage = error.response.data.message || "Something went wrong!"
+                const isNetworkError = error.code === "ERR_NETWORK";
+                const errorMessage = isNetworkError 
+                ? "A network error occurred. Please check your internet connection." 
+                : error.response.data.message || "Something went wrong!";
+
                 setLoginMessage({
                     type: "error",
-                    text: errorMessage
-                })
-            }
+                    text: errorMessage,
+                });
+            },
         }
     );
 
@@ -101,13 +111,13 @@ export default function Login() {
                                     {form.formState.errors.email?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group>
+                            <Form.Group className="position-relative">
                                 <Form.Label htmlFor="user-password">Password</Form.Label>
                                 <Form.Control 
                                     id="user-password"
                                     name="user-password"
                                     autoComplete="off"
-                                    type="password" 
+                                    type={showPassword ? "text" : "password"} 
                                     placeholder="*********"
                                     {...form.register("password")}
                                     isInvalid={!!form.formState.errors.password}
@@ -115,6 +125,12 @@ export default function Login() {
                                 <Form.Control.Feedback type="invalid">
                                     {form.formState.errors.password?.message}
                                 </Form.Control.Feedback>
+                                <i 
+                                    className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"} position-absolute text-secondary`}
+                                    onClick={() => {
+                                        handleTogglePassword(showPassword)
+                                    }}
+                                ></i>
                             </Form.Group>
                             <Button variant="primary" type="submit" className="d-flex align-items-center justify-content-center">
                                 {

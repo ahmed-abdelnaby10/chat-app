@@ -13,7 +13,11 @@ export default function CustomContextMenu({ contextMenu, closeContextMenu }) {
             }} 
         >
             <i className="bi bi-x text-danger"></i>
-            <button>
+            <button
+                style={{
+                    whiteSpace: "nowrap"
+                }}
+            >
                 Close chat
             </button>
         </div>

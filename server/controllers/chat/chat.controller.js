@@ -126,3 +126,21 @@ export const findSpecificChatController = async (req, res) => {
     }
 }
 
+// Delete chat
+export const deleteChatController = async (req, res) => { 
+    try {
+        const { chatId } = req.params
+
+        const chat = await Chat.findById(chatId)
+
+        if (!chat) {
+            return res.status(404).json(formatResponse(httpStatus.ERROR, null, "Chat not found!", 404))
+        }
+
+        await Chat.findByIdAndDelete(chatId);
+
+        return res.status(200).json(formatResponse(httpStatus.SUCCESS, null, "Chat deleted successfully!", 200))
+    } catch (error) {
+        return res.status(500).json(formatResponse(httpStatus.ERROR, null, error.message, 500))
+    }
+}

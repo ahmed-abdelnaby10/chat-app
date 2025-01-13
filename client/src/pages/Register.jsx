@@ -15,6 +15,16 @@ export default function Register() {
         type: "",
         text: ""
     })
+    const [showPassword, setShowPassword] = useState(false)
+
+    const handleTogglePassword = useCallback((state) => {
+        setShowPassword(!state)
+    }, [])
+    const [showC_Password, setShowC_Password] = useState(false)
+
+    const handleToggleC_Password = useCallback((state) => {
+        setShowC_Password(!state)
+    }, [])
 
     const registerFormSchema = z.object({
         name: z
@@ -58,11 +68,15 @@ export default function Register() {
                 form.reset()
             },
             onError: (error) => {
-                const errorMessage = error.response.data.message || "Something went wrong!"
+                const isNetworkError = error.code === "ERR_NETWORK";
+                const errorMessage = isNetworkError 
+                ? "A network error occurred. Please check your internet connection." 
+                : error.response.data.message || "Something went wrong!";
+
                 setRegisterMessage({
                     type: "error",
-                    text: errorMessage
-                })
+                    text: errorMessage,
+                });
             }
         }
     );
@@ -118,13 +132,13 @@ export default function Register() {
                                     {form.formState.errors.email?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group>
+                            <Form.Group className="position-relative">
                                 <Form.Label htmlFor="password">Password</Form.Label>
                                 <Form.Control 
                                     id="password"
                                     name="password"
                                     autoComplete="off"
-                                    type="password" 
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="*********"
                                     {...form.register("password")}
                                     isInvalid={!!form.formState.errors.password}
@@ -132,14 +146,20 @@ export default function Register() {
                                 <Form.Control.Feedback type="invalid">
                                     {form.formState.errors.password?.message}
                                 </Form.Control.Feedback>
+                                <i 
+                                    className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"} position-absolute text-secondary`}
+                                    onClick={() => {
+                                        handleTogglePassword(showPassword)
+                                    }}
+                                ></i>
                             </Form.Group>
-                            <Form.Group>
+                            <Form.Group className="position-relative">
                                 <Form.Label htmlFor="confirm-password">Confirm Password</Form.Label>
                                 <Form.Control
                                     id="confirm-password"
                                     name="confirm-password"
                                     autoComplete="off"
-                                    type="password"
+                                    type={showC_Password ? "text" : "password"}
                                     placeholder="********"
                                     {...form.register("c_password")}
                                     isInvalid={!!form.formState.errors.c_password}
@@ -147,6 +167,12 @@ export default function Register() {
                                 <Form.Control.Feedback type="invalid">
                                     {form.formState.errors.c_password?.message}
                                 </Form.Control.Feedback>
+                                <i 
+                                    className={`bi ${showC_Password ? "bi-eye-slash-fill" : "bi-eye-fill"} position-absolute text-secondary`}
+                                    onClick={() => {
+                                        handleToggleC_Password(showC_Password)
+                                    }}
+                                ></i>
                             </Form.Group>
                             <Button variant="primary" type="submit" className="d-flex align-items-center justify-content-center">
                                 {

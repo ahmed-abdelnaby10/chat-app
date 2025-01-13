@@ -51,7 +51,7 @@ export default function UserChat({ chat, user }) {
         <Stack
             direction="horizontal"
             gap={3}
-            className="user-card align-items-center p-2 justify-content-between"
+            className="user-card align-items-center justify-content-between sdsdsdsd"
             role="button"
             onClick={() => {
                 if (thisUserNotifications?.length !== 0) {
@@ -59,8 +59,8 @@ export default function UserChat({ chat, user }) {
                 }
             }}
         >
-            <div className="d-flex">
-                <div className="me-2 position-relative">
+            <div className="d-flex align-items-center gap-3">
+                <div className="position-relative">
                     <Suspense fallback={<LoadingComponent />}>
                         <img 
                             src={userProfileURL} 

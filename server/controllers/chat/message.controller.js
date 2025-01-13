@@ -81,7 +81,7 @@ export const editMessageController = async (req, res) => {
     }
 }
 
-// Edit message
+// Add & remove reaction to message
 export const reactToMessageController = async (req, res) => { 
     try {
         const { messageId } = req.params
