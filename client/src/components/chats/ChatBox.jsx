@@ -13,8 +13,10 @@ import { formatMessageDate, isNewDay } from "../../utils/dateDivider"
 import CustomContextMenu from "../context menus/ContextMenu"
 import { useSelector } from "../../lib/rtk/index"
 import MsgContextMenu from "../context menus/MessageContextMenu"
+import { useNavigate } from "react-router-dom";
 
 export default function ChatBox({ handleCloseChat }) {
+    const navigate = useNavigate()
     const {
         currentChat, 
         messages, 
@@ -162,7 +164,15 @@ export default function ChatBox({ handleCloseChat }) {
                             </button>
                         )
                     }
-                    <strong>{recipientUser.name}</strong>
+                    <div
+                        role="button"
+                        className="friend-name"
+                        onClick={() => {
+                            navigate(`/friend/${recipientUser?._id}`)
+                        }}
+                    >
+                        <h6 className="m-0 p-0">{recipientUser.name}</h6>
+                    </div>
                 </div>
                 <Stack 
                     gap={3} 

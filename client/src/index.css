@@ -533,3 +533,73 @@ body {
 .bi-eye-slash-fill:hover {
     color: black !important;
 }
+
+.chat-header .friend-name {
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.chat-header .friend-name:hover {
+    background-color: rgb(60, 60, 60);;
+}
+
+.friend-pic {
+    border-radius: 50%;
+    border: 2px solid #00bd9b;
+    padding: 5px;
+}
+
+.actions .message-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    width: 85px;
+}
+
+.actions .message-action i {
+    font-size: 18px;
+}
+
+.more-about {
+    width: 100%;
+}
+
+.more-about .accordion-item button {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    background-color: rgb(100, 100, 100);
+}
+
+.more-about ul {
+    margin: 0;
+    padding: 0 12px;
+    list-style: none;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.more-about ul li {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.more-about ul li span {
+    font-size: 18px;
+    font-weight: 500;
+    color: rgb(100, 100, 100);
+}
+
+.more-about ul li:nth-of-type(2) span {
+    text-transform: capitalize;
+}

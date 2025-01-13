@@ -31,6 +31,7 @@ export const ChatContextProvider = ({ children, user }) => {
     const [notifications, setNotifications] = useState([])
     const [allUsers, setAllUsers] = useState([])
     const [showChatBox, setShowChatBox] = useState(false);
+    const [deleteChatResponse, setDeleteChatResponse] = useState("")
 
     // Initialize Socket
     useEffect(()=> {
@@ -336,7 +337,8 @@ export const ChatContextProvider = ({ children, user }) => {
             queryClient.invalidateQueries({
                 queryKey: ["messages"],
             });
-            queryClient.invalidateQueries(['userChats']) 
+            queryClient.invalidateQueries(['userChats'])
+            
         } catch (error) {
             const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again.';
             console.error(errorMessage);
@@ -346,14 +348,16 @@ export const ChatContextProvider = ({ children, user }) => {
 
     const handleDeleteChat = useCallback(async (chatId) => {
         try {
-            await deleteChat(chatId)
+            const response = await deleteChat(chatId)
             queryClient.invalidateQueries(['userChats'])
             if (currentChat?._id === chatId) {
                 updateCurrentChat(null)
             }
+            setDeleteChatResponse(response?.data?.message)
         } catch (error) {
             const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again.';
             console.error(errorMessage);
+            setDeleteChatResponse(errorMessage)
         }
     }, [currentChat?._id, queryClient, updateCurrentChat])
 
@@ -438,6 +442,7 @@ export const ChatContextProvider = ({ children, user }) => {
                 updateCurrentChat,
                 currentChat,
                 handleDeleteChat,
+                deleteChatResponse,
                 messages,
                 isMessagesError,
                 isMessagesLoading,
