@@ -40,7 +40,7 @@ export default function NavBar() {
             <Container>
                 <h2>
                     <Link to='/' className="link-light text-decoration-none">
-                        ChatApp
+                        Talkie
                     </Link>
                 </h2>
                 {
