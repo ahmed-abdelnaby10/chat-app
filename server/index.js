@@ -28,13 +28,13 @@ const clientURL = process.env.CLIENT_URL
 const io = new Server(
     expressServer,
     {cors: {
-        origin: clientURL
+        origin: "*"
     }}
 );
 
 // Middlewares
 const corsOptions = {
-    origin: clientURL,
+    origin: "*",
 };
 
 app.use(cors(corsOptions));
