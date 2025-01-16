@@ -139,6 +139,32 @@ function AccountFrom() {
         fontWeight: '500'
     }
 
+    const isMediaUnchanged = () => {
+        if (!user.media && !previewImage) {
+            return true;
+        }
+    
+        if (user.media && previewImage) {
+            const previewFileName = previewImage.name;
+            const previewFileSize = previewImage.size;
+    
+            const userMediaFileName = user.media.file_name;
+            const userMediaFileSize = user.media.file_size;
+    
+            return previewFileName === userMediaFileName && previewFileSize === userMediaFileSize;
+        }
+    
+        return false;
+    };
+
+    const isDataUnchanged = 
+    JSON.stringify({name: formData.name, gender: formData.gender, phone: formData.phone}) === JSON.stringify({
+        name: user.name,
+        gender: user.gender || "",
+        phone: user.phone || ""
+    }) &&
+    isMediaUnchanged();
+
     return (
         <Form className="w-100 h-100 mb-5" onSubmit={handleSubmit}>
             <Row
@@ -269,7 +295,12 @@ function AccountFrom() {
                             )}
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" className="d-flex align-items-center justify-content-center">
+                        <Button 
+                            variant="primary" 
+                            type="submit" 
+                            className="d-flex align-items-center justify-content-center"
+                            disabled={isDataUnchanged}
+                        >
                             {
                                 isLoading ? <LoadingComponent /> : "Update profile"
                             }

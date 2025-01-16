@@ -45,12 +45,6 @@ export default function Friend() {
             <Toaster 
                 position="top-center"
                 reverseOrder={true}
-                toastOptions={{
-                    // style: {
-                    //     background: theme === "dark" ? '#363636' : '#fff',
-                    //     color: theme === "dark" ? '#fff' : '#000',
-                    // }
-                }}
             />
             <Stack
                 direction="vertical"
@@ -93,6 +87,7 @@ export default function Friend() {
                 className="more-about"
                 flush
                 as="div"
+                alwaysOpen={false}
             >
                 <Accordion.Item>
                     <Accordion.Header>About {username}</Accordion.Header>

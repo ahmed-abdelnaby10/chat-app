@@ -3,6 +3,7 @@ import { Container, Nav, Stack, Navbar, Dropdown, DropdownButton } from "react-b
 import { Link, useNavigate } from "react-router-dom"
 import ChatContext from "../contexts/ChatContext"
 import avatar from "../assets/avatar.svg"
+import logo1 from "../assets/talkie-high-resolution-logo-removebg-preview.png"
 import { useDispatch, useSelector } from "../lib/rtk/index"
 import Cookies from "js-cookie"
 import { ACCESS_TOKEN } from "../utils/services"
@@ -37,15 +38,15 @@ export default function NavBar() {
 
     return (
         <Navbar bg="dark" className="mb-4 position-sticky top-0 z-3" style={{ height: '3.75rem' }}>
-            <Container>
-                <h2>
-                    <Link to='/' className="link-light text-decoration-none">
-                        Talkie
-                    </Link>
-                </h2>
+            <Container className="position-relative">
+                <Link to='/' className="link-light text-decoration-none font-monospace">
+                    <Suspense fallback={<LoadingComponent />}>
+                        <img src={logo1} alt="llgo" style={{ width: "150px" }}/>
+                    </Suspense>
+                </Link>
                 {
                     user?._id && (
-                        <span className="text-warning" style={{ textTransform: "capitalize" }}>Hey, {welcomeUsername}!</span>
+                        <span className="text-warning navbar-welcome-msg">Hey, {welcomeUsername}!</span>
                     )
                 }
                 <Nav className="dropdown-account-menu-container">

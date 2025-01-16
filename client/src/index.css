@@ -23,6 +23,13 @@ body {
     overflow-x: hidden;
 }
 
+.logo {
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+    padding: 0;
+}
+
     /* All Users */
 .all-users {
     display: flex;
@@ -564,7 +571,19 @@ body {
 }
 
 .more-about {
-    width: 100%;
+    width: 50%;
+}
+
+@media (max-width: 991px) {
+    .more-about {
+        width: 75%;
+    }
+}
+
+@media (max-width: 640px) {
+    .more-about {
+        width: 100%;
+    }
 }
 
 .more-about .accordion-item button {
@@ -602,4 +621,12 @@ body {
 
 .more-about ul li:nth-of-type(2) span {
     text-transform: capitalize;
+}
+
+.navbar-welcome-msg {
+    text-transform: capitalize;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
