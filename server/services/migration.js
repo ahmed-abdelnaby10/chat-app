@@ -4,7 +4,7 @@ import connectDB from "../config/db.js";
 (async () => {
     await connectDB()
 
-    const collections = ['messages'];
+    const collections = ['messages', 'chats', 'users'];
 
     for (const collectionName of collections) {
         const collection = mongoose.connection.collection(collectionName);
