@@ -640,9 +640,14 @@ body {
     text-transform: capitalize;
 }
 
+.navbar-welcome-msg {
+    display: none;
+}
+
 @media (min-width: 640px) {
     .navbar-welcome-msg {
         text-transform: capitalize;
+        display: block;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -653,7 +658,6 @@ body {
         -o-transform: translate(-50%, -50%);
     }
 }
-
 
 .requests-container {
     align-self: center;
