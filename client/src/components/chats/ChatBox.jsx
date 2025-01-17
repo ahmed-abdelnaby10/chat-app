@@ -284,14 +284,7 @@ export default function ChatBox({ handleCloseChat }) {
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
-                                // sendTextMessage(textMessage, user, currentChat._id, setTextMessage);
                                 handleSubmitMessage()
-                            }
-                        }}
-                        onBlur={() => {
-                            if (!editingMessage || textMessage.trim() === editingMessage.text.trim()) {
-                                setEditingMessage(null);
-                                setTextMessage("");
                             }
                         }}
                     />

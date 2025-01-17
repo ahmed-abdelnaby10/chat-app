@@ -1,14 +1,14 @@
 import PropTypes from "prop-types"
 import { Stack } from "react-bootstrap"
-import { useSelector } from "../../lib/rtk"
 import { Suspense, useContext } from "react"
 import ChatContext from "../../contexts/ChatContext"
 import LoadingComponent from "../Loading"
 import avatar from "../../assets/avatar.svg"
+import { useNavigate } from "react-router-dom"
 
 export default function PotenialChat({ show, handleClose }) {
-    const { potentialChats, createChat, onlineUsers } = useContext(ChatContext)
-    const user = useSelector(state => state.user)
+    const { potentialChats, onlineUsers } = useContext(ChatContext)
+    const navigate = useNavigate()
 
     if (show)
     return (
@@ -30,7 +30,7 @@ export default function PotenialChat({ show, handleClose }) {
                                 direction="horizontal"
                                 gap={3}
                                 onClick={()=> {
-                                    createChat(user?._id, u?._id)
+                                    navigate(`/friend/${u?._id}`)
                                     handleClose()
                                 }}
                             >

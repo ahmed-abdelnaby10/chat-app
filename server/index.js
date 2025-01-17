@@ -70,6 +70,25 @@ expressServer.listen(PORT, () => {
 // Real time connection and events
 let onlineUsers = []
 
+// update requests handler
+const emitFriendRequestUpdate = (uSocketId, fSocketId, user, friend) => {
+    if (user) {
+        io.to(uSocketId).emit("updateFriendRequests", {
+            sent: user.friendRequests.sent,
+            received: user.friendRequests.received,
+            friends: user.friends
+        });
+    }
+
+    if (friend) {
+        io.to(fSocketId).emit("updateFriendRequests", {
+            sent: friend.friendRequests.sent,
+            received: friend.friendRequests.received,
+            friends: friend.friends
+        });
+    }
+};
+
 io.on("connection", (socket) => {
     console.log("New connection: ", socket.id);
 
@@ -123,6 +142,37 @@ io.on("connection", (socket) => {
         if (senderUser) {
             io.to(senderUser.socketId).emit("getReactedMessage", message);
         }
+    })
+
+    socket.on("removeFriend", (data) => {
+        const friend = onlineUsers.find((user) => user.userId === data.friend._id);
+        const user = onlineUsers.find((user) => user.userId === data.user._id);
+
+        emitFriendRequestUpdate(user.socketId, friend.socketId, data.user, data.friend)
+    })
+
+    socket.on("sendFriendRequest", (data) => {
+        const friend = onlineUsers.find((user) => user.userId === data.friend._id);
+        const user = onlineUsers.find((user) => user.userId === data.user._id);
+        emitFriendRequestUpdate(user.socketId, friend.socketId, data.user, data.friend)
+    })
+    
+    socket.on("acceptFriendRequest", (data) => {
+        const friend = onlineUsers.find((user) => user.userId === data.friend._id);
+        const user = onlineUsers.find((user) => user.userId === data.user._id);
+        emitFriendRequestUpdate(user.socketId, friend.socketId, data.user, data.friend)
+    })
+    
+    socket.on("rejectFriendRequest", (data) => {
+        const friend = onlineUsers.find((user) => user.userId === data.friend._id);
+        const user = onlineUsers.find((user) => user.userId === data.user._id);
+        emitFriendRequestUpdate(user.socketId, friend.socketId, data.user, data.friend)
+    })
+    
+    socket.on("cancelFriendRequest", (data) => {
+        const friend = onlineUsers.find((user) => user.userId === data.friend._id);
+        const user = onlineUsers.find((user) => user.userId === data.user._id);
+        emitFriendRequestUpdate(user.socketId, friend.socketId, data.user, data.friend)
     })
     
     socket.on("logout", () => {   

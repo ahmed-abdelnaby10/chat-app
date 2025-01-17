@@ -32,6 +32,8 @@ export const loginController = async (req, res) => {
                 email: user.email,
                 gender: user.gender,
                 phone: user.phone,
+                friends: user.friends,
+                friendRequests: user.friendRequests,
                 media: user.media,
                 created_at: user.created_at,
                 updated_at: user.updated_at

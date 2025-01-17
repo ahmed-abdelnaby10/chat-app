@@ -5,6 +5,8 @@ import { getAllUsersController, getOneUser } from '../controllers/users/getUsers
 import { authVerification } from '../middlewares/verifyAuth.middleware.js'
 import { changePasswordController, deleteUserController, updateUserController } from '../controllers/users/users.controller.js'
 import uploadImage from "../middlewares/uploadImage.middleware.js"
+import { removeFriendController } from '../controllers/users/friends.controller.js'
+import { acceptFriendRequestController, cancelFriendRequestController, rejectFriendRequestController, sendFriendRequestController } from '../controllers/users/friendRequests.controller.js'
 
 const router = express.Router()
 
@@ -24,5 +26,20 @@ router.route('/users/:userId')
 
 router.route('/users/:userId/change-password')
     .patch(authVerification, changePasswordController);
+
+router.route('/:userId/send-friend-request')
+    .patch(authVerification, sendFriendRequestController);
+
+router.route('/:userId/accept-friend-request')
+    .patch(authVerification, acceptFriendRequestController);
+
+router.route('/:userId/reject-friend-request')
+    .patch(authVerification, rejectFriendRequestController);
+
+router.route('/:userId/cancel-friend-request')
+    .patch(authVerification, cancelFriendRequestController);
+    
+router.route('/:userId/remove-friend')
+        .patch(authVerification, removeFriendController);
 
 export default router

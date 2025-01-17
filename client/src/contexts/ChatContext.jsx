@@ -465,7 +465,8 @@ export const ChatContextProvider = ({ children, user }) => {
                 markNotificationAsRead,
                 markThisUserNotifications,
                 updateShowChatBox,
-                showChatBox
+                showChatBox,
+                socketRef
             }}
         >
             {children}

@@ -37,20 +37,20 @@ export default function NavBar() {
     }
 
     return (
-        <Navbar bg="dark" className="mb-4 position-sticky top-0 z-3" style={{ height: '3.75rem' }}>
+        <Navbar bg="dark" className="mb-4 navbar-navbar position-sticky top-0 z-3 d-flex flex-column-reverse">
+            {
+                user?._id && (
+                    <span className="text-warning navbar-welcome-msg">Hey, {welcomeUsername}!</span>
+                )
+            }
             <Container className="position-relative">
                 <Link to='/' className="link-light text-decoration-none font-monospace">
                     <Suspense fallback={<LoadingComponent />}>
-                        <img src={logo1} alt="llgo" style={{ width: "150px" }}/>
+                        <img src={logo1} alt="logo" className="logo"/>
                     </Suspense>
                 </Link>
-                {
-                    user?._id && (
-                        <span className="text-warning navbar-welcome-msg">Hey, {welcomeUsername}!</span>
-                    )
-                }
                 <Nav className="dropdown-account-menu-container">
-                    <Stack direction="horizontal" gap={3} className="w-100 h-100">
+                    <Stack direction="horizontal" className="w-100 h-100 gap-sm-3">
                         {
                             isAuthenticated ? (
                                 <>
@@ -60,7 +60,7 @@ export default function NavBar() {
                                         variant="none"
                                         title={
                                             <Suspense fallback={<LoadingComponent />}>
-                                                <img 
+                                                <img
                                                     src={user?.media?.preview_url || avatar}
                                                     alt="user-pic"
                                                     height={30}
@@ -87,6 +87,14 @@ export default function NavBar() {
                                             }}
                                         >
                                             Account
+                                        </Dropdown.Item>
+                                        <Dropdown.Item  
+                                            as="button"
+                                            onClick={() => {
+                                                navigate("/friend-requests")
+                                            }}
+                                        >
+                                            Friend requests
                                         </Dropdown.Item>
                                         <Dropdown.Item
                                             as="button"

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from 'validator'
 import mediaSchema from "./media.model.js";
+import friendRequestsSchema from "./friendRequests.model.js";
 
 const { isEmail } = validator
 
@@ -33,6 +34,25 @@ const userSchema = new mongoose.Schema(
         gender: {
             type: String,
             required: false,
+        },
+        friends: {
+            type: [
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User',
+                },
+            ],
+            default: [],
+            validate: {
+                validator: function (value) {
+                    return value.length <= 100;
+                },
+                message: 'Friends array exceeds the limit of 100.',
+            },
+        },        
+        friendRequests: {
+            type: friendRequestsSchema,
+            default: () => ({ sent: [], received: [] }),
         },
         media: {
             type: mediaSchema,

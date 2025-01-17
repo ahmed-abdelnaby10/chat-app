@@ -3,11 +3,13 @@ import ChatContext from "../../contexts/ChatContext"
 import { getUnreadNotifications } from "../../utils/notifications"
 import moment from "moment"
 import { useSelector } from "../../lib/rtk/index"
+import { useNavigate } from "react-router-dom"
 
 export default function Notifications() {
     const { notifications, userChats, allUsers, markAllNotificationsAsRead, markNotificationAsRead } = useContext(ChatContext)
     const user = useSelector(state => state.user)
     const [isOpen, setIsOpen] = useState(false)
+    const navigate = useNavigate()
 
     const unreadNotifications = getUnreadNotifications(notifications)
 
@@ -32,14 +34,6 @@ export default function Notifications() {
             messageCount: notificationsForSender.length // Count of messages from this sender
         };
     });
-    // const modifiedNotifications = notifications.map((n) => {
-    //     const sender = allUsers.find((u) => u._id === n.senderId)
-
-    //     return {
-    //         ...n,
-    //         senderName: sender?.name
-    //     }
-    // })
 
     const handlePreventDefault = (e) => {
         e.preventDefault();
@@ -56,6 +50,7 @@ export default function Notifications() {
         handlePreventDefault(e)
         markNotificationAsRead(notification, userChats, user, notifications);
         setIsOpen(false);
+        navigate("/")
     };
 
     return (
