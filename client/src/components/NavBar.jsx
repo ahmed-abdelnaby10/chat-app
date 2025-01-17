@@ -50,7 +50,7 @@ export default function NavBar() {
                     </Suspense>
                 </Link>
                 <Nav className="dropdown-account-menu-container">
-                    <Stack direction="horizontal" className="w-100 h-100 gap-sm-3">
+                    <Stack direction="horizontal" className={`w-100 h-100 gap-sm-3 ${!isAuthenticated && "gap-3"}`}>
                         {
                             isAuthenticated ? (
                                 <>
